@@ -1,2 +1,4 @@
 *.out
 *.hack
+*.dat
+.DS_Store
