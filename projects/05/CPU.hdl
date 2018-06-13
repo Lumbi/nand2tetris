@@ -39,5 +39,71 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // Split the instruction bits
+    And16(
+        a=instruction, b=instruction,
+        out[15]=iBit,
+        out[12]=aBit,
+        out[11]=zxBit,
+        out[10]=nxBit,
+        out[9]=zyBit,
+        out[8]=nyBit,
+        out[7]=fBit,
+        out[6]=noBit,
+        out[5]=dstABit,
+        out[4]=dstDBit,
+        out[3]=dstMBit,
+        out[2]=jmpLTBit,
+        out[1]=jmpEQBit,
+        out[0]=jmpGTBit
+        );
+
+    // Select A Register 
+    Mux16(a=instruction, b=aluOut, sel=iBit, out=aInput);
+    Not(in=iBit, out=isAInstruction);
+    Or(a=isAInstruction, b=dstABit, out=loadA);
+
+    // A register
+    Register(in=aInput, load=loadA, out=aRegister);
+
+    // D register
+    And(a=dstDBit, b=iBit, out=loadD);
+    Register(in=aluOut, load=loadD, out=dRegister);
+
+    // Select ALU Y input
+    Mux16(a=aRegister, b=inM, sel=aBit, out=aluY);
+
+    ALU(
+        x=dRegister,
+        y=aluY,
+        zx=zxBit,
+        nx=nxBit,
+        zy=zyBit,
+        ny=nyBit,
+        f=fBit,
+        no=noBit,
+        zr=aluZr,
+        ng=aluNg,
+        out=aluOut
+        );
+
+    // Write to M
+    And(a=dstMBit, b=iBit, out=writeM);
+    And16(a=aluOut, b=aluOut, out=outM);
+    And16(a=aRegister, b=aRegister, out[0..14]=addressM);
+
+    // Jump
+    And(a=jmpLTBit, b=aluNg, out=shouldJmpLT);
+    And(a=jmpEQBit, b=aluZr, out=shouldJmpEQ);
+    Not(in=aluNg, out=aluPs);
+    Not(in=aluZr, out=aluNotZr);
+    And(a=aluPs, b=aluNotZr, out=aluGT);
+    And(a=jmpGTBit, b=aluGT, out=shouldJmpGT);
+    Or(a=shouldJmpLT, b=shouldJmpGT, out=shouldJmpLTGT);
+    Or(a=shouldJmpLTGT, b=shouldJmpEQ, out=shouldJumpLTGTEQ);
+    And(a=shouldJumpLTGTEQ, b=iBit, out=shouldJump);
+
+    // PC
+    PC(in=aRegister, load=shouldJump, inc=true, reset=reset, out[0..14]=pc);
 }
