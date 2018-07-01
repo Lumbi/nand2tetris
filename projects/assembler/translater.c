@@ -30,7 +30,7 @@ char* translateCMD(const char* const cmp)
   if (strcmp(cmp, "-D") == 0)  return "0001111";
   if (strcmp(cmp, "-A") == 0)  return "0110011";
   if (strcmp(cmp, "-M") == 0)  return "1110011";
-  if (strcmp(cmp, "D+1") == 0) return "0111111";
+  if (strcmp(cmp, "D+1") == 0) return "0011111";
   if (strcmp(cmp, "A+1") == 0) return "0110111";
   if (strcmp(cmp, "M+1") == 0) return "1110111";
   if (strcmp(cmp, "D-1") == 0) return "0001110";
