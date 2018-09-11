@@ -90,9 +90,10 @@ void set_symbol(const char* const symbol, const int address, struct symbol_table
 
 int set_variable(const char* const variable, struct symbol_table* const table)
 {
+  int variable_address = table->_free_variable_address;
   set_symbol(variable, table->_free_variable_address, table);
   table->_free_variable_address++;
-  return table->_free_variable_address;
+  return variable_address;
 }
 
 void print_symbol_table(const struct symbol_table* const table)
