@@ -154,6 +154,9 @@ struct instruction* parse(const char* str, const int address)
     inst->symbol = (char*)malloc((symbol_len+1) * sizeof (char)); // +1 for the null terminator
     memcpy(inst->symbol, &line[1], symbol_len);
     inst->symbol[symbol_len] = 0;
+    #ifdef DEBUG
+    printf("\t Parsed A-inst: %s\n", inst->symbol);
+    #endif
   } else if (line[0] == '(')
   {
     inst->type = L;

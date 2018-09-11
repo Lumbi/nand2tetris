@@ -91,6 +91,7 @@ void set_symbol(const char* const symbol, const int address, struct symbol_table
 int set_variable(const char* const variable, struct symbol_table* const table)
 {
   int variable_address = table->_free_variable_address;
+  printf("Assigning %s to address: %d\n", variable, variable_address);
   set_symbol(variable, table->_free_variable_address, table);
   table->_free_variable_address = table->_free_variable_address + 1;
   return variable_address;
