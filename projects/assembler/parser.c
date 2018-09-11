@@ -150,9 +150,10 @@ struct instruction* parse(const char* str, const int address)
   if (line[0] == '@')
   {
     inst->type = A;
-    size_t symbol_len = strlen(line)-1;
-    inst->symbol = (char*)malloc(symbol_len * sizeof (char));
+    size_t symbol_len = strlen(line)-1; // -1 to ignore the @
+    inst->symbol = (char*)malloc((symbol_len+1) * sizeof (char)); // +1 for the null terminator
     memcpy(inst->symbol, &line[1], symbol_len);
+    inst->symbol[symbol_len] = 0;
   } else if (line[0] == '(')
   {
     inst->type = L;
